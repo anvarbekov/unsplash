@@ -5,7 +5,9 @@ export const GlobalContext = createContext();
 const dataFromLocalStorage = () => {
   try {
     const storedData = localStorage.getItem("my-splash-data");
-    return storedData ? JSON.parse(storedData) : { likedImages: [], downloadImages: [] };
+    return storedData
+      ? JSON.parse(storedData)
+      : { likedImages: [], downloadImages: [] };
   } catch (error) {
     console.error("Error parsing localStorage data:", error);
     return { likedImages: [], downloadImages: [] }; // Standart qiymat qaytaramiz
@@ -24,7 +26,17 @@ const changeState = (state, action) => {
     case "UNLIKE":
       return {
         ...state,
-        likedImages: state.likedImages.filter((image) => image.id != payload),
+        likedImages: state.likedImages.filter((image) => image.id !== payload),
+      };
+    case "DOWNLOAD":
+      return {
+        ...state,
+        downloadImages: [...state.downloadImages, payload],
+      };
+    case "REMOVE":
+      return {
+        ...state,
+        downloadImages: state.downloadImages.filter((image) => image.id !== payload),
       };
     default:
       return state;

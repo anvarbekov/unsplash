@@ -1,9 +1,14 @@
 // global context hook
 import { Link } from "react-router-dom";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { FaHeart, FaRegHeart, FaCloudDownloadAlt } from "react-icons/fa";
-export default function Image({ image, added }) {
-  const { likedImages, dispatch } = useGlobalContext();
+import {
+  FaHeart,
+  FaRegHeart,
+  FaCloudDownloadAlt,
+  FaTrashAlt,
+} from "react-icons/fa";
+export default function Image({ image, added, downloaded }) {
+  const { likedImages, downloadImages, dispatch } = useGlobalContext();
   const { links, urls, alt_description, user } = image;
 
   const addLikedImage = (image, e) => {
@@ -19,10 +24,19 @@ export default function Image({ image, added }) {
     }
   };
 
-  const downloadImage = (e) => {
+  const downloadImage = (image, e) => {
     e.preventDefault();
-    window.open(links.download + "&force=true", ("_blank"))
-  }
+    const alreadyAdded = downloadImages.some((img) => {
+      return img.id == image.id;
+    });
+
+    if (!alreadyAdded) {
+      dispatch({ type: "DOWNLOAD", payload: image });
+      window.open(links.download + "&force=true", "_blank");
+    } else {
+      dispatch({ type: "REMOVE", payload: image.id });
+    }
+  };
 
   return (
     <Link to={`/imageInfo/${image.id}`}>
@@ -59,10 +73,18 @@ export default function Image({ image, added }) {
           <p className="text-white text-xs">{user.name}</p>
         </span>
         <span
-          onClick={(e) => downloadImage(e)}
+          onClick={(e) => downloadImage(image, e)}
           className="absolute bg-white invisible opacity-0 group-hover:opacity-100 group-hover:visible transition-all duration-300 w-7 h-7  border cursor-pointer rounded-full flex justify-center items-center right-2 bottom-2">
           <FaCloudDownloadAlt />
         </span>
+
+        {downloaded && (
+          <span
+            onClick={(e) => downloadImage(image, e)}
+            className="absolute bg-white invisible opacity-0 group-hover:opacity-100 group-hover:visible transition-all duration-300 w-7 h-7  border cursor-pointer rounded-full flex justify-center items-center left-2 top-2">
+            <FaTrashAlt />
+          </span>
+        )}
       </div>
     </Link>
   );

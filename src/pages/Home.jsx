@@ -25,7 +25,7 @@ export default function Home() {
   const { data, isPending, error } = useFetch(
     `https://api.unsplash.com/search/photos?client_id=${
       import.meta.env.VITE_ACCESS_KEY
-    }&query=${searchParamFromAction ?? "all"}&page=${pageParam}`
+    }&query=${searchParamFromAction ?? "all"}&page=${pageParam}`,
   );
 
   useEffect(() => {
@@ -38,8 +38,6 @@ export default function Home() {
     }
   }, [data]);
 
-  console.log(data);
-
   useEffect(() => {
     if (searchParamFromAction !== prevSearchParam.current) {
       setAllImages([]);
@@ -49,22 +47,27 @@ export default function Home() {
   }, [searchParamFromAction]);
 
   if (error) {
-    return <h1>Error: {error}</h1>;
+    return <h1>Error: {error.message}</h1>;
   }
 
   return (
     <>
-      <div className="mt-5 mb-5">
+      <div className="mb-5 mt-5">
         <Search />
       </div>
-      {isPending && <h1>Loading...</h1>}
+      {isPending && (
+        <div className="flex h-full items-center justify-center">
+          <span className="loading loading-dots loading-lg"></span>
+        </div>
+      )}
       {allImages.length > 0 && <ImageContainer images={allImages} />}
       <div>
         <button
           onClick={() => {
             setPageParam(pageParam + 1);
           }}
-          className="btn btn-secondary w-full my-5">
+          className="btn btn-secondary my-5 w-full"
+        >
           {isPending ? "Loading..." : "Read More"}
         </button>
       </div>

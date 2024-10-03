@@ -10,13 +10,13 @@ export default function Footer() {
           <p>Copyright © {new Date().getFullYear()} - All right reserved</p>
         </aside>
         <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
-          <a href="#" className="text-2xl cursor-pointer">
+          <a target="_blank" href="https://www.youtube.com/@muhammadnozimanvarbekov" className="text-2xl cursor-pointer">
             <FaYoutube />
           </a>
-          <a href="#" className="text-2xl cursor-pointer">
+          <a target="_blank" href="https://t.me/muhammadnozimDeveloper" className="text-2xl cursor-pointer">
             <FaTelegram />
           </a>
-          <a href="#" className="text-2xl cursor-pointer">
+          <a target="_blank" href="https://www.instagram.com/muhammadnozim__anvarbekov/" className="text-2xl cursor-pointer">
             <FaInstagram />
           </a>
         </nav>

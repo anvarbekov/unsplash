@@ -3,7 +3,7 @@ import Image from "./Image";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 
 export default function ImageContainer({ images }) {
-  const { likedImages } = useGlobalContext();
+  const { likedImages, downloadImages } = useGlobalContext();
   return (
     <>
       <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}>
@@ -14,6 +14,9 @@ export default function ImageContainer({ images }) {
                 key={image.id}
                 image={image}
                 added={likedImages.some((img) => {
+                  return img.id == image.id;
+                })}
+                downloaded={downloadImages.some((img) => {
                   return img.id == image.id;
                 })}
               />
