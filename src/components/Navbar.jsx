@@ -12,13 +12,17 @@ import { FaMoon } from "react-icons/fa6";
 // components
 import NavLinks from "./NavLinks";
 import { FaCloudDownloadAlt } from "react-icons/fa";
+// firebase
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase/firebaseConfig";
+import { toast } from "react-toastify";
 
 const themeFromLocalStorage = () => {
   return localStorage.getItem("theme") || "winter";
 };
 
 export default function Navbar() {
-  const { likedImages, downloadImages } = useGlobalContext();
+  const { likedImages, downloadImages, user, dispatch } = useGlobalContext();
   const [theme, setTheme] = useState(themeFromLocalStorage());
   const toggleTheme = () => {
     const newTheme = theme == "winter" ? "dracula" : "winter";
@@ -30,21 +34,32 @@ export default function Navbar() {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  const signOutUser = async () => {
+    try {
+      await signOut(auth);
+      dispatch({ type: "LOGOUT" });
+      toast.success("See you soon");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <header className="bg-base-200">
-      <div className="navbar global__container">
+      <div className="global__container navbar">
         <div className="navbar-start">
           <Link to={"/"} className="hidden md:flex">
-            <FcStackOfPhotos className="w-10 h-10" />
+            <FcStackOfPhotos className="h-10 w-10" />
           </Link>
 
           <div className="dropdown md:hidden">
             <div tabIndex={0} role="button" className="btn m-1">
-              <FcStackOfPhotos className="w-10 h-10" />
+              <FcStackOfPhotos className="h-10 w-10" />
             </div>
             <ul
               tabIndex={0}
-              className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+            >
               <NavLinks />
             </ul>
           </div>
@@ -57,19 +72,19 @@ export default function Navbar() {
         <div className="navbar-end gap-x-4">
           <Link to={"/downloadImages"}>
             <div className="indicator">
-              <span className="indicator-item badge badge-sm badge-secondary">
+              <span className="badge indicator-item badge-secondary badge-sm">
                 {downloadImages.length}
               </span>
-              <FaCloudDownloadAlt className="w-6 h-6 text-success" />
+              <FaCloudDownloadAlt className="h-6 w-6 text-success" />
             </div>
           </Link>
 
           <Link to={"/likedImages"}>
             <div className="indicator">
-              <span className="indicator-item badge badge-sm badge-secondary">
+              <span className="badge indicator-item badge-secondary badge-sm">
                 {likedImages.length}
               </span>
-              <FaHeart className="w-6 h-6 text-success" />
+              <FaHeart className="h-6 w-6 text-success" />
             </div>
           </Link>
 
@@ -83,6 +98,34 @@ export default function Navbar() {
               {/* moon icon */}
               <FaMoon className="swap-off h-7 w-7 fill-current" />
             </label>
+          </div>
+          <div className="dropdown dropdown-end">
+            <div
+              tabIndex={0}
+              role="button"
+              className="avatar btn btn-circle btn-ghost"
+            >
+              <div className="w-10 rounded-full">
+                <img alt={user.displayName} src={user.photoURL} />
+              </div>
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
+            >
+              <li>
+                <a className="justify-between">
+                  Profile
+                  <span className="badge">New</span>
+                </a>
+              </li>
+              <li>
+                <a>Settings</a>
+              </li>
+              <li>
+                <button onClick={signOutUser}>Logout</button>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
